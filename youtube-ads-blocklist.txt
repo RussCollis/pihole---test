@@ -1,0 +1,163 @@
+# =============================================================================
+#  Pi-hole blocklist: YouTube / Google video ads
+# =============================================================================
+#  Author:   Russell Collis
+#  Version:  1.0.0
+#  Updated:  2026-11-22
+#  Format:   one domain per line (Pi-hole "domains" format). Lines that start
+#            with "#" are comments, and Pi-hole skips them.
+#
+#  ---------------------------------------------------------------------------
+#  READ THIS FIRST: what DNS blocking can and can't do for YouTube
+#  ---------------------------------------------------------------------------
+#  Pi-hole works at the DNS level, so it can only block a whole hostname.
+#  YouTube serves most of its video ads (the pre-roll and mid-roll clips) from
+#  the SAME hosts as the real videos (*.googlevideo.com and www.youtube.com).
+#  Pi-hole can't tell those requests apart, so it can't stop most in-video
+#  ads without also breaking YouTube.
+#
+#  What this list DOES block:
+#    - Ad banners and display ads on youtube.com and other sites
+#    - Ad tracking and measurement beacons (impressions, clicks, conversions)
+#    - The DoubleClick / AdSense / Ad Manager networks that YouTube embeds and
+#      many third-party sites use
+#    - Some ads on smart TV and console YouTube apps that still call these hosts
+#
+#  What this list CAN'T block:
+#    - Most in-video ads in the YouTube app or website (same hosts as video)
+#    - Sponsor segments read by creators (they're part of the video)
+#
+#  For in-video ads you need something that filters by URL path rather than
+#  by domain: uBlock Origin (browser), SmartTube (Android TV), or YouTube
+#  Premium.
+#
+#  ---------------------------------------------------------------------------
+#  Domains this list leaves out on purpose (blocking them breaks YouTube)
+#  ---------------------------------------------------------------------------
+#    *.googlevideo.com / r*---sn-*.googlevideo.com
+#        Lists that block these "ad server" hosts are a common myth. Those hosts
+#        are YouTube's video CDN nodes. Blocking them causes buffering and
+#        black screens and doesn't reliably stop ads.
+#    s.youtube.com          playback stats; blocking it breaks watch history
+#    youtubei.googleapis.com  the YouTube app's main API
+#    jnn-pa.googleapis.com  playback attestation; blocking it breaks playback
+#    i.ytimg.com / yt3.ggpht.com  thumbnails and channel avatars
+#    googletagmanager.com   breaks login and checkout on many websites
+#
+#  ---------------------------------------------------------------------------
+#  Known side effects of THIS list
+#  ---------------------------------------------------------------------------
+#    - Clicking "Sponsored" results at the top of Google Search won't work,
+#      because those links go through googleadservices.com / doubleclick.net.
+#      Scroll down to the normal result instead.
+#    - Some shopping and price-comparison links that use ad redirects fail.
+#    - imasdk.googleapis.com: some news and TV sites won't play their own
+#      videos until their ad loads. If a site's video player breaks, allow this
+#      domain in Pi-hole. (Mostly this just skips their ads.)
+# =============================================================================
+
+
+# -----------------------------------------------------------------------------
+#  1. YouTube's own ad hosts
+# -----------------------------------------------------------------------------
+# Legacy and current YouTube ad-serving and ad-report hosts.
+ads.youtube.com
+ad.youtube.com
+
+
+# -----------------------------------------------------------------------------
+#  2. DoubleClick (Google Ad Manager / Campaign Manager)
+# -----------------------------------------------------------------------------
+# DoubleClick sends ad creatives, VAST video-ad XML and click tracking to
+# YouTube and most of the web. "doubleclick.net" covers the root domain, and
+# Pi-hole needs each subdomain listed separately in a plain list. The regex file next to this one
+# (youtube-ads-regex.txt) covers every subdomain.
+doubleclick.net
+www.doubleclick.net
+ad.doubleclick.net
+ad-g.doubleclick.net
+ad.mo.doubleclick.net
+googleads.g.doubleclick.net
+googleads4.g.doubleclick.net
+pubads.g.doubleclick.net
+securepubads.g.doubleclick.net
+static.doubleclick.net
+stats.g.doubleclick.net
+m.doubleclick.net
+mediavisor.doubleclick.net
+pagead.l.doubleclick.net
+cm.g.doubleclick.net
+fls.doubleclick.net
+td.doubleclick.net
+# 2mdn.net is DoubleClick's host for rich-media and video ad files.
+2mdn.net
+s0.2mdn.net
+s1.2mdn.net
+rmcdn.2mdn.net
+
+
+# -----------------------------------------------------------------------------
+#  3. Google Ad Services (conversion tracking and ad click redirects)
+# -----------------------------------------------------------------------------
+googleadservices.com
+www.googleadservices.com
+partner.googleadservices.com
+pagead2.googleadservices.com
+adservice.google.com
+# Country-specific copies of adservice that Google uses in many regions.
+adservice.google.co.uk
+adservice.google.ca
+adservice.google.com.au
+adservice.google.de
+adservice.google.fr
+
+
+# -----------------------------------------------------------------------------
+#  4. Google Syndication (AdSense / display and video ad delivery)
+# -----------------------------------------------------------------------------
+googlesyndication.com
+pagead.googlesyndication.com
+pagead2.googlesyndication.com
+tpc.googlesyndication.com
+video-ad-stats.googlesyndication.com
+afs.googlesyndication.com
+partnerad.l.google.com
+# Ad tags and "Google Publisher Tag" loader scripts.
+googletagservices.com
+www.googletagservices.com
+
+
+# -----------------------------------------------------------------------------
+#  5. Google IMA SDK (Interactive Media Ads: video ads in web/TV players)
+# -----------------------------------------------------------------------------
+# YouTube embeds, many smart TV apps and news sites use this SDK to fetch video
+# ads. See the side-effects note at the top if a site's video player breaks.
+imasdk.googleapis.com
+dai.google.com
+
+
+# -----------------------------------------------------------------------------
+#  6. Ad-block detection and ad consent prompts
+# -----------------------------------------------------------------------------
+# Shows the "It looks like you're using an ad blocker" messages on sites that
+# use Google's Funding Choices.
+fundingchoicesmessages.google.com
+
+
+# -----------------------------------------------------------------------------
+#  7. Ad measurement and verification beacons
+# -----------------------------------------------------------------------------
+# Third-party trackers that measure whether a video ad was seen. Blocking them
+# doesn't break video playback.
+ade.googlesyndication.com
+gstaticadssl.l.google.com
+# Third-party ad verification networks found on YouTube ad calls.
+moatads.com
+z.moatads.com
+px.moatads.com
+pixel.adsafeprotected.com
+static.adsafeprotected.com
+fw.adsafeprotected.com
+cdn.doubleverify.com
+tps.doubleverify.com
+rtb0.doubleverify.com

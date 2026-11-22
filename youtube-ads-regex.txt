@@ -1,0 +1,32 @@
+# =============================================================================
+#  Pi-hole REGEX deny rules: Google / YouTube ad networks (every subdomain)
+# =============================================================================
+#  Author:  Russell Collis   Version: 1.0.0   Updated: 2026-11-22
+#
+#  Adlists can't hold regex rules. Add these as regex deny entries instead:
+#    Pi-hole v6:  Domains > "Regex filter" > Deny, or
+#                 sudo pihole --regex '<pattern>'
+#    Pi-hole v5:  Blacklist > "Add regex", or  pihole --regex '<pattern>'
+#
+#  Each pattern matches the root domain AND every subdomain:
+#  (^|\.) means "start of the name, or a dot", and $ means "end of the name".
+# =============================================================================
+
+# DoubleClick: ad creatives, VAST video-ad XML, click tracking
+(^|\.)doubleclick\.net$
+# DoubleClick rich-media and video ad file host
+(^|\.)2mdn\.net$
+# AdSense / display and video ad delivery
+(^|\.)googlesyndication\.com$
+# Conversion tracking and Sponsored-link redirects (breaks clicking Google Sponsored results)
+(^|\.)googleadservices\.com$
+# Google Publisher Tag loader
+(^|\.)googletagservices\.com$
+# adservice.google.<any country TLD>, e.g. adservice.google.co.uk
+^adservice\.google\.[a-z]{2,3}(\.[a-z]{2})?$
+# YouTube's own legacy ad hosts
+^ads?\.youtube\.com$
+# Third-party ad verification (Moat, IAS, DoubleVerify)
+(^|\.)moatads\.com$
+(^|\.)adsafeprotected\.com$
+(^|\.)doubleverify\.com$
