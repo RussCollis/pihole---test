@@ -1,0 +1,90 @@
+# =============================================================================
+#  Pi-hole blocklist: Apple App Store ads (Apple Ads / Search Ads)
+# =============================================================================
+#  Author:   Russell Collis
+#  Version:  1.0.0
+#  Updated:  2026-11-23
+#  Format:   one domain per line (Pi-hole "domains" format). Lines that start
+#            with "#" are comments, and Pi-hole skips them.
+#
+#  ---------------------------------------------------------------------------
+#  READ THIS FIRST: what DNS blocking can and can't do for the App Store
+#  ---------------------------------------------------------------------------
+#  Pi-hole can only block a whole hostname. The App Store sends its ad
+#  slots (the blue "Ad" result at the top of a search, the "You Might Also
+#  Like" ads on app pages, and Today-tab ads) through the SAME servers as
+#  normal App Store content (amp-api.apps.apple.com, *.itunes.apple.com,
+#  *.mzstatic.com). Blocking those servers breaks the App Store completely, so
+#  this list can't remove the ad slot itself.
+#
+#  What this list DOES block:
+#    - Apple's ad-delivery, ad-tracking and ad-attribution servers
+#    - The AdServices "which ad made you install this app" report that apps
+#      send back to their advertisers
+#    - Legacy iAd hosts that some older apps still call
+#
+#  What this list CAN'T block:
+#    - The sponsored result at the top of an App Store search
+#    - Ads that third-party apps show (those come from other ad networks,
+#      such as Google AdMob, which the YouTube list already covers)
+#
+#  To turn off personalised App Store ads on the device itself:
+#    iPhone/iPad:  Settings > Privacy & Security > Apple Advertising >
+#                  Personalised Ads = Off
+#    Mac:          System Settings > Privacy & Security > Apple Advertising >
+#                  Personalised Ads = Off
+#  You'll still see ads, but Apple stops targeting them at you.
+#
+#  ---------------------------------------------------------------------------
+#  Domains this list leaves out on purpose (blocking them breaks things)
+#  ---------------------------------------------------------------------------
+#    amp-api.apps.apple.com / apps.apple.com   App Store search and pages
+#    *.itunes.apple.com / *.mzstatic.com       app downloads, icons, purchases
+#    buy.itunes.apple.com / p*-buy.itunes.apple.com   purchases and updates
+#    news-edge.apple.com                       Apple News articles
+#    gs.apple.com / gsa.apple.com / mesu.apple.com   iOS updates and activation
+# =============================================================================
+
+
+# -----------------------------------------------------------------------------
+#  1. Apple Ads delivery (App Store, Apple News and Stocks ads)
+# -----------------------------------------------------------------------------
+# iAd SDK host; still used for Apple's ad requests and ad configuration.
+iadsdk.apple.com
+cf.iadsdk.apple.com
+# Legacy iAd hosts that older apps still try to reach.
+iad.apple.com
+iadcontent.apple.com
+# Apple's advertiser websites. Nothing on your devices needs them, so it's
+# safe to block them unless you run Apple Ads campaigns yourself.
+ads.apple.com
+searchads.apple.com
+
+
+# -----------------------------------------------------------------------------
+#  2. Ad attribution (AdServices / SKAdNetwork reports)
+# -----------------------------------------------------------------------------
+# Apps call this to learn which Apple ad led you to install them. Blocking it
+# stops the report and doesn't break the app.
+api-adservices.apple.com
+
+
+# -----------------------------------------------------------------------------
+#  3. iTunes affiliate ad banners (used on websites, not in the App Store)
+# -----------------------------------------------------------------------------
+banners.itunes.apple.com
+
+
+# -----------------------------------------------------------------------------
+#  4. OPTIONAL: App Store and Apple News metrics (off by default)
+# -----------------------------------------------------------------------------
+# These collect usage statistics, including which ads you saw and tapped.
+# Many people block them with no problems, but there are reports of slow App
+# Store pages or failed purchases on some iOS versions. To try blocking them,
+# remove the "# " at the start of each line, then run "pihole -g". If the
+# App Store misbehaves, add the "# " back.
+# xp.apple.com
+# metrics.apple.com
+# securemetrics.apple.com
+# news-events.apple.com
+# stocks-analytics-events.apple.com
